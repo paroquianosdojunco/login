@@ -34,11 +34,13 @@
 
                     // Adiciona o evento de logout
                     document.getElementById("logout").addEventListener("click", () => {
-                        auth0Client.logout({ returnTo: window.location.origin + "/login" }); // Redireciona para a página inicial
+                        auth0Client.logout({ 
+                            returnTo: "https://paroquianosdojunco.github.io/login" // URL absoluta
+                        });
                     });
                 } else {
                     // Redireciona para a página de login se o usuário não estiver autenticado
-                    window.location.href = "/login";
+                    window.location.href = "https://paroquianosdojunco.github.io/login";
                 }
             } catch (error) {
                 console.error("Erro ao carregar autenticação:", error);
