@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando para o Login</title>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+</head>
+<body>
+    <h1>Redirecionando para o Login...</h1>
+    <script>
+        // Redireciona para o endpoint /authorize do Auth0
+        const auth0Domain = "dev-paroquianosdojunco.us.auth0.com";
+        const clientId = "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5";
+        const redirectUri = encodeURIComponent("https://paroquianosdojunco.github.io/login/authenticated.html");
+
+        window.location.href = `https://${auth0Domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=openid profile email`;
+    </script>
+</body>
+</html>
