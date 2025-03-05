@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Protegida</title>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+</head>
+<body>
+    <h1>Página Protegida</h1>
+    <p id="user-info">Carregando informações do usuário...</p>
+    <button id="logout" disabled>Logout</button>
+
+    <script>
+        async function loadAuth() {
+            try {
+                const auth0Client = await createAuth0Client({
+                    domain: "dev-paroquianosdojunco.us.auth0.com",
+                    client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5"
+                });
+
+                // Processa o callback do login, se necessário
+                const query = window.location.search;
+                if (query.includes("code=") && query.includes("state=")) {
+                    await auth0Client.handleRedirectCallback();
+                    window.history.replaceState({}, document.title, "/authenticated.html");
+                }
+
+                const isAuthenticated = await auth0Client.isAuthenticated();
+                if (isAuthenticated) {
+                    const user = await auth0Client.getUser();
+                    document.getElementById("user-info").innerText = `Bem-vindo, ${user.name}`;
+                    document.getElementById("logout").disabled = false; // Habilita o botão de logout
+
+                    // Adiciona o evento de logout
+                    document.getElementById("logout").addEventListener("click", () => {
+                        auth0Client.logout({ returnTo: window.location.origin });
+                    });
+                } else {
+                    // Redireciona para a página de login se o usuário não estiver autenticado
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error("Erro ao carregar autenticação:", error);
+                document.getElementById("user-info").innerText = "Erro ao carregar informações do usuário.";
+            }
+        }
+
+        // Carrega a autenticação ao iniciar a página
+        loadAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login e Logout com Auth0</title>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+</head>
+<body>
+    <h1>Bem-vindo ao Sistema</h1>
+    <button id="login" disabled>Carregando...</button>
+    <button id="logout" style="display: none;">Sair</button> <!-- Botão de logout escondido inicialmente -->
+
+    <script>
+        let auth0Client;
+        let isAuth0Initialized = false;
+
+        // Função para inicializar o Auth0
+        async function initAuth0() {
+            try {
+                auth0Client = await createAuth0Client({
+                    domain: "dev-paroquianosdojunco.us.auth0.com",
+                    client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5",
+                    redirect_uri: window.location.origin + "/authenticated.html" // Redireciona para authenticated.html após login
+                });
+
+                console.log("Auth0 Inicializado:", auth0Client);
+                isAuth0Initialized = true; // Marca como inicializado
+                document.getElementById("login").disabled = false; // Habilita o botão de login
+                document.getElementById("login").innerText = "Login"; // Altera o texto do botão
+            } catch (error) {
+                console.error("Erro ao iniciar Auth0:", error);
+                document.getElementById("login").innerText = "Erro ao carregar";
+            }
+        }
+
+        // Função para o login
+        document.getElementById("login").addEventListener("click", async () => {
+            if (!isAuth0Initialized) {
+                console.error("Auth0 ainda não foi inicializado.");
+                return;
+            }
+
+            try {
+                console.log("Iniciando login...");
+                await auth0Client.loginWithRedirect();
+            } catch (error) {
+                console.error("Erro ao fazer login:", error);
+            }
+        });
+
+        // Função para o logout
+        document.getElementById("logout").addEventListener("click", async () => {
+            if (!isAuth0Initialized) {
+                console.error("Auth0 ainda não foi inicializado.");
+                return;
+            }
+
+            try {
+                console.log("Iniciando logout...");
+                await auth0Client.logout({
+                    returnTo: window.location.origin // Redireciona para a página inicial após o logout
+                });
+            } catch (error) {
+                console.error("Erro ao fazer logout:", error);
+            }
+        });
+
+        // Inicializa o Auth0 ao carregar a página
+        initAuth0();
+
+        // Verifica se o usuário está logado e atualiza os botões
+        async function checkLoginStatus() {
+            const isAuthenticated = await auth0Client.isAuthenticated();
+
+            if (isAuthenticated) {
+                document.getElementById("login").style.display = "none"; // Esconde o botão de login
+                document.getElementById("logout").style.display = "inline-block"; // Exibe o botão de logout
+            } else {
+                document.getElementById("login").style.display = "inline-block"; // Exibe o botão de login
+                document.getElementById("logout").style.display = "none"; // Esconde o botão de logout
+            }
+        }
+
+        // Verifica o status de login quando a página é carregada
+        checkLoginStatus();
+    </script>
+</body>
+</html>
