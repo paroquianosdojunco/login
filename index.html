@@ -9,7 +9,7 @@
 <body>
     <h1>Bem-vindo ao Sistema</h1>
     <button id="login" disabled>Carregando...</button>
-    <button id="logout" style="display: none;">Sair</button> <!-- Botão de logout escondido inicialmente -->
+    <button id="logout" style="display: none;">Sair</button>
 
     <script>
         let auth0Client;
@@ -21,13 +21,13 @@
                 auth0Client = await createAuth0Client({
                     domain: "dev-paroquianosdojunco.us.auth0.com",
                     client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5",
-                    redirect_uri: window.location.origin + "/authenticated.html" // Redireciona para authenticated.html após login
+                    redirect_uri: window.location.origin + "/login/authenticated.html" // Correção para GitHub Pages
                 });
 
                 console.log("Auth0 Inicializado:", auth0Client);
-                isAuth0Initialized = true; // Marca como inicializado
-                document.getElementById("login").disabled = false; // Habilita o botão de login
-                document.getElementById("login").innerText = "Login"; // Altera o texto do botão
+                isAuth0Initialized = true;
+                document.getElementById("login").disabled = false;
+                document.getElementById("login").innerText = "Login";
             } catch (error) {
                 console.error("Erro ao iniciar Auth0:", error);
                 document.getElementById("login").innerText = "Erro ao carregar";
@@ -59,7 +59,7 @@
             try {
                 console.log("Iniciando logout...");
                 await auth0Client.logout({
-                    returnTo: window.location.origin // Redireciona para a página inicial após o logout
+                    returnTo: window.location.origin + "/login" // Redireciona para a página inicial após logout
                 });
             } catch (error) {
                 console.error("Erro ao fazer logout:", error);
@@ -74,11 +74,11 @@
             const isAuthenticated = await auth0Client.isAuthenticated();
 
             if (isAuthenticated) {
-                document.getElementById("login").style.display = "none"; // Esconde o botão de login
-                document.getElementById("logout").style.display = "inline-block"; // Exibe o botão de logout
+                document.getElementById("login").style.display = "none";
+                document.getElementById("logout").style.display = "inline-block";
             } else {
-                document.getElementById("login").style.display = "inline-block"; // Exibe o botão de login
-                document.getElementById("logout").style.display = "none"; // Esconde o botão de logout
+                document.getElementById("login").style.display = "inline-block";
+                document.getElementById("logout").style.display = "none";
             }
         }
 

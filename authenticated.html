@@ -23,22 +23,22 @@
                 const query = window.location.search;
                 if (query.includes("code=") && query.includes("state=")) {
                     await auth0Client.handleRedirectCallback();
-                    window.history.replaceState({}, document.title, "/authenticated.html");
+                    window.history.replaceState({}, document.title, "/login/authenticated.html"); // Limpa a URL
                 }
 
                 const isAuthenticated = await auth0Client.isAuthenticated();
                 if (isAuthenticated) {
                     const user = await auth0Client.getUser();
                     document.getElementById("user-info").innerText = `Bem-vindo, ${user.name}`;
-                    document.getElementById("logout").disabled = false; // Habilita o botão de logout
+                    document.getElementById("logout").disabled = false;
 
                     // Adiciona o evento de logout
                     document.getElementById("logout").addEventListener("click", () => {
-                        auth0Client.logout({ returnTo: window.location.origin });
+                        auth0Client.logout({ returnTo: window.location.origin + "/login" }); // Redireciona para a página inicial
                     });
                 } else {
                     // Redireciona para a página de login se o usuário não estiver autenticado
-                    window.location.href = "index.html";
+                    window.location.href = "/login";
                 }
             } catch (error) {
                 console.error("Erro ao carregar autenticação:", error);
