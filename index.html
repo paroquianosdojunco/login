@@ -19,9 +19,9 @@
         async function initAuth0() {
             try {
                 auth0Client = await createAuth0Client({
-                    domain: "dev-paroquianosdojunco.us.auth0.com",
-                    client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5",
-                    redirect_uri: "https://paroquianosdojunco.github.io/login/authenticated.html" // URL absoluta
+                    domain: "dev-paroquianosdojunco.us.auth0.com", // Domínio do Auth0
+                    client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5", // Client ID do Auth0
+                    redirect_uri: "https://paroquianosdojunco.github.io/login/authenticated.html" // URL de callback
                 });
 
                 console.log("Auth0 Inicializado:", auth0Client);
@@ -59,7 +59,7 @@
             try {
                 console.log("Iniciando logout...");
                 await auth0Client.logout({
-                    returnTo: "https://paroquianosdojunco.github.io/login" // URL absoluta
+                    returnTo: "https://paroquianosdojunco.github.io/login" // URL de logout
                 });
             } catch (error) {
                 console.error("Erro ao fazer logout:", error);
