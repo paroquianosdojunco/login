@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login e Logout com Auth0</title>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <!-- Script do Auth0 (versão atualizada) -->
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.2.0/auth0-spa-js.production.js"></script>
 </head>
 <body>
     <h1>Bem-vindo ao Sistema</h1>
@@ -18,6 +19,13 @@
         // Função para inicializar o Auth0
         async function initAuth0() {
             try {
+                console.log("Iniciando Auth0...");
+                // Verifica se createAuth0Client está disponível
+                if (typeof createAuth0Client === "undefined") {
+                    throw new Error("A função createAuth0Client não está disponível. Verifique se o script do Auth0 foi carregado corretamente.");
+                }
+
+                // Cria o cliente Auth0
                 auth0Client = await createAuth0Client({
                     domain: "dev-paroquianosdojunco.us.auth0.com", // Domínio do Auth0
                     client_id: "FapnfQU6knUY7bql4gW3cwnuxCCOgLW5", // Client ID do Auth0
@@ -29,7 +37,7 @@
                 document.getElementById("login").disabled = false;
                 document.getElementById("login").innerText = "Login";
             } catch (error) {
-                console.error("Erro ao iniciar Auth0:", error);
+                console.error("Erro ao iniciar Auth0:", error.message || error);
                 document.getElementById("login").innerText = "Erro ao carregar";
             }
         }
@@ -45,7 +53,7 @@
                 console.log("Iniciando login...");
                 await auth0Client.loginWithRedirect();
             } catch (error) {
-                console.error("Erro ao fazer login:", error);
+                console.error("Erro ao fazer login:", error.message || error);
             }
         });
 
@@ -62,28 +70,40 @@
                     returnTo: "https://paroquianosdojunco.github.io/login" // URL de logout
                 });
             } catch (error) {
-                console.error("Erro ao fazer logout:", error);
+                console.error("Erro ao fazer logout:", error.message || error);
             }
         });
+
+        // Verifica se o usuário está logado e atualiza os botões
+        async function checkLoginStatus() {
+            try {
+                // Verifica se o cliente Auth0 foi inicializado
+                if (!auth0Client) {
+                    console.warn("Auth0 ainda não foi inicializado. Aguardando inicialização...");
+                    return;
+                }
+
+                const isAuthenticated = await auth0Client.isAuthenticated();
+
+                if (isAuthenticated) {
+                    document.getElementById("login").style.display = "none";
+                    document.getElementById("logout").style.display = "inline-block";
+                } else {
+                    document.getElementById("login").style.display = "inline-block";
+                    document.getElementById("logout").style.display = "none";
+                }
+            } catch (error) {
+                console.error("Erro ao verificar status de login:", error.message || error);
+            }
+        }
 
         // Inicializa o Auth0 ao carregar a página
         initAuth0();
 
-        // Verifica se o usuário está logado e atualiza os botões
-        async function checkLoginStatus() {
-            const isAuthenticated = await auth0Client.isAuthenticated();
-
-            if (isAuthenticated) {
-                document.getElementById("login").style.display = "none";
-                document.getElementById("logout").style.display = "inline-block";
-            } else {
-                document.getElementById("login").style.display = "inline-block";
-                document.getElementById("logout").style.display = "none";
-            }
-        }
-
         // Verifica o status de login quando a página é carregada
-        checkLoginStatus();
+        window.addEventListener("load", () => {
+            checkLoginStatus();
+        });
     </script>
 </body>
 </html>
